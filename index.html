@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta name="description" content="" />
+<meta name="keywords" content="シャルソン,野々市" />
+<meta name="Robots" content="ALL" />
+
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+
+<title>給◯ポイント｜野々市シャルソン</title>
+
+<link rel="apple-touch-icon-precomposed" href="icons/icon_cialthon.png">
+
+<link rel="stylesheet" href="css/mapStyle.css" type="text/css" />
+
+<!-- jquery ライブラリ -->
+<script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+
+<!-- googlemaps 描画用ライブラリ & 距離や面積の計算用ライブラリ -->
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=geometry,drawing&sensor=false"></script>
+
+<script type="text/javascript" src="js/myScript.js"></script>
+<script type="text/javascript" src="js/wisteriahill/googlemaps.js"></script>
+<script type="text/javascript" src="js/wisteriahill/streetview.js"></script>
+
+<!-- geolib, 地域の判定に利用。ライセンスはLGPL, https://github.com/manuelbieh/Geolib -->
+<script type="text/javascript" src="js/geolib.js"></script>
+
+<script type="text/javascript">
+	//test data
+	//var out_polytype = "circle";
+	//var out_polytype = "rect";
+	var out_polytype   = "polyline";
+
+	//circle
+	var out_circle_center = new google.maps.LatLng(ini_lat,ini_lng);
+	var out_circle_radius = 640.8803883073895;
+
+	//rect
+	var out_rect_start = new google.maps.LatLng(ini_lat,ini_lng);
+	var out_rect_end   = new google.maps.LatLng(36.51553432112248,136.61541938781738);
+
+	//polyline
+	var out_pointsArray4Area = [
+		new google.maps.LatLng(36.522397700184435,136.61391735076904),
+		new google.maps.LatLng(36.521845893218334,136.60932540893555),
+		new google.maps.LatLng(36.51736231572707,136.60722255706787),
+		new google.maps.LatLng(36.51629311657773,136.61340236663818)
+	];
+
+	//markers sampledata
+	/*
+	var markersSample = [
+		new google.maps.LatLng(36.51670700187187, 136.60640716552734),
+		new google.maps.LatLng(36.515810247603426, 136.61048412322998),
+		new google.maps.LatLng(36.51518941163777, 136.60773754119873),
+		new google.maps.LatLng(36.52105266380958, 136.60808086395264),
+		new google.maps.LatLng(36.52091471003875, 136.61087036132812),
+		new google.maps.LatLng(36.519673115032745, 136.6069221496582),
+		new google.maps.LatLng(36.519431691467936, 136.6083812713623),
+		new google.maps.LatLng(36.51939720232574, 136.6155481338501),
+		new google.maps.LatLng(36.52325989069009, 136.6173505783081),
+		new google.maps.LatLng(36.524708349108806, 136.61404609680176),
+		new google.maps.LatLng(36.52491526952622, 136.6108274459839),
+		new google.maps.LatLng(36.525432568148354, 136.60730838775635),
+		new google.maps.LatLng(36.5226046267821, 136.6054630279541),
+		new google.maps.LatLng(36.52198384532881, 136.60460472106934),
+		new google.maps.LatLng(36.52091471003875, 136.60318851470947),
+		new google.maps.LatLng(36.51922475638425, 136.6067934036255),
+		new google.maps.LatLng(36.51994902675589, 136.6137456893921),
+		new google.maps.LatLng(36.51875052806346, 136.60905718803406),
+		new google.maps.LatLng(36.51870741625382, 136.61033391952515)
+	];
+	*/
+
+	var Q_point = [];
+	var qi = 0;
+	Q_point[qi++] = [36.53215066980107, 136.60802721977234,"受付：文化会館フォルテ","http://forte.nono1.jp" , ""];
+
+	Q_point[qi++] = [36.51948342515338, 136.60936832427979,"事務局：情報交流館カメリア","http://camellia.nono1.jp" , ""];
+	Q_point[qi++] = [36.532784300861344, 136.6098403930664,"交流会場：ジョイハウス","" , "https://www.facebook.com/nonoichicialthon/posts/662010933885627"];
+	Q_point[qi++] = [36.53532859251481, 136.6063106060028,"スポンサー：JA野々市","" , "https://www.facebook.com/nonoichicialthon/posts/668222629931124"];
+	Q_point[qi++] = [36.51473671561141, 136.60407096147537, "林農産" , "http://www.hayashisanchi.jp" , "https://www.facebook.com/media/set/?set=a.658621954224525.1073741829.636627143090673&amp;type=1"];
+
+	Q_point[qi++] = [36.52983593261685, 136.62427335977554, "カフェ五十川堂" , "https://www.facebook.com/IKAGAWADO" , "https://www.facebook.com/nonoichicialthon/posts/659161560837231"];
+	Q_point[qi++] = [36.5193711, 136.60670749999997, "ジェシカ" , "http://www.jesi-ca.com/" , "https://www.facebook.com/nonoichicialthon/posts/660991057320948"];
+	Q_point[qi++] = [36.53584678778404, 136.60795153865777, "まつもと食堂" , "" , "https://www.facebook.com/nonoichicialthon/posts/661508540602533"];
+	Q_point[qi++] = [36.531626950411045, 136.60770535469055, "ティールームフォルテ" , "" , "https://www.facebook.com/nonoichicialthon/posts/662848723801848"];
+	Q_point[qi++] = [36.52937590000001, 136.63435500000003, "珈琲のばん" , "https://www.facebook.com/pages/珈琲のばん/143988642368728?fref=ts" , "https://www.facebook.com/nonoichicialthon/posts/664785520274835"];
+	Q_point[qi++] = [36.5314558, 136.61790369999994, "英語プレゼン道場かがく反応" , "http://www.eigo-presen.jp/" , "https://www.facebook.com/nonoichicialthon/posts/665640226856031"];
+	Q_point[qi++] = [36.5348637, 136.61464569999998, "コーヒーハウス　茶々" , "" , "https://www.facebook.com/nonoichicialthon/posts/665940156826038"];
+	Q_point[qi++] = [36.53197401646465, 136.61578062023776, "樫田冨嶽堂" , "http://www.design-to.com/k/" , "https://www.facebook.com/nonoichicialthon/posts/666038426816211"];
+	Q_point[qi++] = [36.5396104, 136.6010301, "ウッドサイクル" , "http://wood-cycle.info/" , "https://www.facebook.com/nonoichicialthon/posts/667333973353323"];
+	Q_point[qi++] = [36.5315002, 136.61919250000005, "いそや菓子舗" , "" , "https://www.facebook.com/nonoichicialthon/posts/667833703303350"];
+	Q_point[qi++] = [36.5379578, 136.62227540000004, "フルーツショップ フタバ" , "" ,"https://www.facebook.com/nonoichicialthon/posts/668196576600396"];
+	Q_point[qi++] = [36.53173040143581, 136.61669477820396, "のっチャン（移動販売）" , "" , "https://www.facebook.com/nonoichicialthon/posts/668600273226693"];
+	Q_point[qi++] = [36.533356568903585, 136.61358699510654, "ゑまひ寿司" , "" , "https://www.facebook.com/nonoichicialthon/posts/668619913224729"];
+	Q_point[qi++] = [36.5409658, 136.59796359999996, "カイロプラクティック 爽RYU" , "http://csoryu.wix.com/csoryu" , "https://www.facebook.com/nonoichicialthon/posts/669054843181236"];
+	Q_point[qi++] = [36.5188351, 136.60757680000006, "Baker’s Kitchen アル" , "http://bakeraru.exblog.jp/" , "https://www.facebook.com/nonoichicialthon/posts/669062873180433"];
+	Q_point[qi++] = [36.5268675, 136.61956740000005, "ハム＆ゴー コーヒー＆ストック" , "http://www.humandgo.com/" , "https://www.facebook.com/nonoichicialthon/posts/669787729774614"];
+	Q_point[qi++] = [36.52870871242895, 136.62826716899872, "株式会社CirKit(サーキット)" , "http://www.cirkit.jp/" , "https://www.facebook.com/nonoichicialthon/posts/670672059686181"];
+	//22
+
+</script>
+	
+</head>
+<body onload="initialize()">
+
+<form name="GoogleMapsContainer">
+
+<ul id="menu_tab">
+	<li id="ret" onclick="window.open('https://www.facebook.com/nonoichicialthon')">ｼｬﾙｿﾝ<br />FBへ</li>
+	<!--li id="menu_close" onclick="menu_close()">Menu<br />閉じる</li-->
+	<li id="subtitle" onclick="menu_open('menu_info')">給◯<br />ポイント</li>
+	<li id="area_tab"  onclick="menu_open('route_menu')">経路<br />検索</li>
+	<li id="duge_exe"  onclick="menu_open('city_menu');">野々市<br />市域</li-->
+	<!--li id="duge_tab"  onclick="appraise('duge_menu')">給◯<br />ポイント</li-->
+	<!--li id="clear_map" onclick="clear_params(); menu_close();">クリア</li-->
+	<li id="move_tab"  onclick="menu_open('move_menu')">地図の<br />操作</li>
+</ul>
+<div id="menu_info">
+	野々市シャルソンへようこそ！！<br />
+	給◯ポイントと主な会場をご案内します。<br />
+	<!--道に迷ったら、マーカーをクリックしてください。<br /-->
+	<div id="PointList">
+
+	</div>
+	<!--・疲れたら「のっティ」に乗ってＯＫ<br />
+	　　<a href="http://apli.nono1.jp/busdoco_local" target="_blank">時刻表はこちら</a><br />
+	　　<a href="http://apli.nono1.jp/rootguide/" tarfet="_blank">ルートはこちら</a><br /-->
+	<font size="2">（カメリア・パルの会　ののいちコンテンツ部会）</font>
+</div>
+
+<div id="move_menu">
+	<div id="mapnaviMenu-1" class="naviMenu">
+		□表示地（地図の中心）が確認できます
+		<BR>
+		<input type="text" id="rev_address" size=30 /><input type="button" value="確認" onclick="reverseGeocode()" />
+		<input type="button" onclick="alert(map_center)" value="center" />
+
+		<hr />
+
+		■住所指定で表示地を移動できます<BR>
+		<input type="text" id="realaddress" size=25 value="" />
+		<input type="button" id="addressmove" value="移動" onclick="addressNavi()" />
+
+		<hr />
+		■地図の高さを指定できます
+		<select id="mapheight" onChange="mapHeight();">
+		<option value="300px" >300px</option>
+		<option value="350px" >350px</option>
+		<option value="400px" selected >400px</option>
+		<option value="450px" >450px</option>
+		<option value="500px" >500px</option>
+		<option value="550px" >550px</option>
+		<option value="600px" >600px</option>
+		<option value="650px" >650px</option>
+		<option value="700px" >700px</option>
+		</select>
+
+	</div>
+	
+	<!-- mapnaviMenu-5 非表示(hidden)-->
+	<div id="mapnaviMenu-5" class="naviMenu">
+		■駅名で検索して移動<BR>
+		
+		<div id="sta_info">
+			<input type="text" id="station_name" size=25 value="" />
+			<input type="button" id="stationmove" value="移動" onclick="stationNavi()" />
+		</div>
+	</div>
+	
+	<!-- mapnaviMenu-6 非表示(hidden)-->
+	<div id="mapnaviMenu-6" style="left:1000px;visibility:hidden;position:absolute;">
+		&nbsp;&nbsp; <font color="#0000ff" size=2>■ランドマーク名で検索して移動</font><BR>
+		
+		<div id="land_info">
+			&nbsp;&nbsp; <input type="text" id="landmark_name" size=25 value="" />
+			<input type="button" id="landmarkmove" value="移動" onclick="landmarkNavi()" />
+		</div>
+		
+		
+	</div>
+		
+	<!-- mapnaviMenu-2 非表示(hidden)-->
+	<div id="mapnaviMenu-2" style="left:1000px;visibility:hidden;position:absolute;">
+		&nbsp;&nbsp; <font color="#0000ff" size=2>■電話番号で移動</font><BR>
+		&nbsp;&nbsp; <input type="text" id="phonenumber" size=25 value="" />
+		<input type="button" id="phonemove" value="移動" onclick="phoneNavi()" />
+		<BR>
+		&nbsp;&nbsp; <font color="#0000ff" size=2>電話帳に記載されている法人のみ有効</font>
+		
+	</div>
+
+	<!-- mapnaviMenu-3 非表示(hidden)-->
+	<div id="mapnaviMenu-3" style="left:1000px;visibility:hidden;position:absolute;">
+		&nbsp;&nbsp; <font color="#0000ff" size=2>■緯度・経度（60進）で移動</font><BR>
+		&nbsp;&nbsp; <font color="#0000ff" size=2>緯度</font>
+		<input type="text" id="ido_do_60" size=2 value="" /><font color="#0000ff" size=2>度</font>
+		<input type="text" id="ido_hun_60" size=2 value="" /><font color="#0000ff" size=2>分</font>
+		<input type="text" id="ido_byo_60" size=6 value="" /><font color="#0000ff" size=2>秒</font>
+		<BR>
+		&nbsp;&nbsp; <font color="#0000ff" size=2>経度</font>
+		<input type="text" id="keido_do_60" size=2 value="" /><font color="#0000ff" size=2>度</font>
+		<input type="text" id="keido_hun_60" size=2 value="" /><font color="#0000ff" size=2>分</font>
+		<input type="text" id="keido_byo_60" size=6 value="" /><font color="#0000ff" size=2>秒</font>
+		
+		<input type="button" value="移動" onclick="coord60Navi()" />
+	</div>
+
+	<!-- mapnaviMenu-4 非表示(hidden)-->	
+	<div id="mapnaviMenu-4" class="naviMenu">
+		■緯度・経度(10進)で移動<BR>
+		緯度<input type="text" id="ido_byo_10" name="idobyo10" size=20 value="" />
+		<BR>
+		経度<input type="text" id="keido_byo_10" name="keidobyo10" size=20 value="" />
+		<input type="button" value="移動" onclick="coord10Navi()" />
+		
+		<div id="addnaviwait_loader" style="visibility:visible"></div>
+	</div>
+</div>
+
+<div id="area_menu">
+	<div id="set_area">
+		□評価する範囲の指定方法<br />
+		<input type="radio" name="p_type" value="polyline" checked onClick="chk_radio()">多角形&nbsp;&nbsp;
+		<input type="radio" name="p_type" value="circle" onClick="chk_radio()">円&nbsp;&nbsp;
+		<input type="radio" name="p_type" value="rect" onClick="chk_radio()">矩形&nbsp;&nbsp;	
+<!--　外部データの使用 -->
+		<input type="radio" name="p_type" value="outdata" onClick="chk_radio()">外部
+
+		<input type="button" name="town_set" value ="町内会設定" onClick="takePolygon()") />
+
+		<select name="town_area" id="town_area" onCheng="town_secelct()">
+			<!--option value="0" >-----------</option-->
+		</select>
+ 		
+<!--                -->		
+		<br />
+		<input type="text" id="explain" size=40 value="地図上でクリックして、エリアを指定する">
+		<div id="otherparam">
+			<input type="button" id="undo" onClick="polyDelPath()" value="追加取り消し" />
+		
+		</div>
+		
+	<hr />
+	<input type="checkbox" id="editable" onClick="polyEdit()"><font size=2>編集可能</font>
+	&nbsp;&nbsp;
+	<input type="checkbox" id="draggable" onClick="polyDrag()"><font size=2>移動可能</font>		
+
+		<!-- input type="button" value="クリア" onclick="clear_params()" /-->
+		
+	</div>
+</div>
+
+<div id="appr_menu">
+		□評価指数は、◯○◯○です。<br />
+		・個数：<br />
+		・面積：
+		<input type="hidden" id="meter_area" size=15 value="" />
+		<input type="text" id="calcarea" size=15>
+		<span id="tani" style="display:none;" >m&sup2;</span>
+		<!--<input type="text" id="tani" style="border:0px" size=2 value="㎡">-->
+		
+		<select id="conv_tani" name="conv_tani" onChange="convert_tani()">
+			
+			<option value="m㎡">平方ミリメートル[m㎡]</option>
+			<option value="c㎡">平方センチメートル[c㎡]</option>
+			<option selected value="㎡">平方メートル[㎡]</option>
+			<option value="k㎡">平方キロメートル[k㎡]</option>
+			
+			<option value="a">アール[a]</option>
+			<option value="ha">ヘクタール[ha]</option>
+			<option value="in2">平方インチ[in&sup2;]</option>
+			<option value="ft2">平方フィート[ft&sup2;]</option>
+			<option value="yd2">平方ヤード[yd&sup2;]</option>
+			<option value="mi2">平方マイル[mi&sup2;]</option>
+			<option value="rood">ルード[rood]</option>
+			<option value="ac">エーカー[ac]</option>
+			
+			<option value="joh_edo">畳・江戸間(じょう)</option>
+			<option value="joh_danchi">畳・団地間(じょう)</option>
+			<option value="shaku">勺(しゃく)</option>
+			<option value="goh">合(ごう)</option>
+			<option value="tubo">坪(つぼ)</option>
+			<option value="se">畝(せ)</option>
+			<option value="tan">反(たん)</option>
+			<option value="choh">町(ちょう)</option>
+			
+		</select>
+		
+		<br />
+		　<select id="compare_type" onChange="value_compare()">
+			<option value="tokyodome">東京ドーム</option>
+			<option value="koushien">甲子園</option>
+			<option value="soccerfield">サッカーグラウンド</option>
+			<option value="usj">USJ</option>
+			<option value="tdl">東京ディズニーランド</option>
+		</select>
+		<input type="text" size=10 id="compare_value" value="">個分
+		<hr />
+		<input type="button" value="マーカクリア" onclick="reset_markers()" /><br />
+		<hr />
+		□評価結果を印刷する。<br />
+		□評価結果を保存する。（登録ユーザのみ可能）<br />
+
+</div>
+
+<div id="duge_menu">
+	<div id="mapnaviMenu-7" class="naviMenu">
+		<!--//評価試験-->
+		<!--input type="button" value="明るさを評価する" onclick="appraise()" /-->
+		□評価条件を設定する<br />
+		□マーカクリックで情報を表示する（画像、街路灯種別、管理担当など）<br />
+	</div>
+</div>
+
+<div id="city_menu">
+	<input type="button" onclick="view_city_area()" value="野々市市域を表示する" class="bt" /><br />
+	・東西4.5キロメートル、南北6.7キロメートル<br />
+	・面積13.56平方キロメートル<br />
+	・<a href="http://www.city.nonoichi.lg.jp/soumu/gaiyou.html" target="_blank">野々市市の概要</a><br />
+	<input type="button" value="クリア" onclick="clear_params()" />
+</div>
+
+<div id="route_menu">
+	出発地点、目標地点を①、②、③いづれかの方法で設定し、経路を検索してください。<br />
+	<input type="button" onclick="clear_Route()" value="クリア" />
+	<input type="button" onclick="google_Route()" value="経路検索" class="bt" /><br />
+<hr />
+	・出発地点：<input type="text" id="start_point" size="25" /><br />
+	①マーカーをクリック　
+	<input type="button" value="②現在位置" onclick="getNowLocation(2)" class="bt" />
+	<input type="button" value="③地図の中心" onclick="getMapCenter(1)" class="bt" />
+<hr />
+	・目標地点：<input type="text" id="arive_point" size="25" /><br />
+	①マーカーをクリック　
+	<input type="button" value="②現在位置" onclick="getNowLocation(1)" class="bt" />
+	<input type="button" value="③地図の中心" onclick="getMapCenter(2)" class="bt" />	
+</div>
+
+<div id="map_canvas"></div>
+
+<div id="mapnavi">
+		
+</div>
+
+<!--
+<input type="hidden" id="domain" size=25 value="orchard.ddo.jp" />
+<input type="hidden" id="dirname" size=25 value="GMAP_V3" />
+<input type="hidden" id="port" size=25 value="80" />
+<input type="hidden" id="ini_ido" size=25 value="35.36286726458948" />
+<input type="hidden" id="ini_keido" size=25 value="138.73157501220703" />
+<input type="hidden" id="mapzoomlevel" size=25 value="4" />
+-->
+
+<input type="hidden" id="ido_byo_10" size=25 value="" />
+<input type="hidden" id="keido_byo_10" size=25 value="" />
+
+<input type="hidden" id="mapido" value=""/>
+<input type="hidden" id="mapkeido" value=""/>
+<input type="hidden" id="maptype" value=""/>
+
+</form>
+
+<!--div id="streetview" style="top:580px;left:10px;width:500px;height:0px;position:absolute;border:1px solid black;visibility:visible;">
+</div-->
+
+<div id="streetview">
+</div>
+
+<!--div>
+<input type="button" id="polyview" value="データ表示" onclick="polydataview()" />
+<input type="text" id="polydata" size="200" />
+</div-->
+
+<div id="footer">
+Nonoichi Cialthon 2014
+</div>
+
+<script type="text/javascript">
+
+//****** 共通部のスクリプト ********
+
+//window risize 時の処理
+$(window).resize(function(){
+	gmap_init();
+	//
+	v_line.setPosition(map_center.lat(),map_center.lng());
+	h_line.setPosition(map_center.lat(),map_center.lng());
+});
+
+
+//mapの高さを変更する
+function mapHeight(){
+	var emt = document.getElementById('mapheight');
+
+	for(var i = 0 ; i < emt.options.length ; i++){
+		if( emt.options[i].selected ){
+			var hei = emt.options[i].value;
+			document.getElementById("map_canvas").style.height = hei;
+
+		}
+	}
+
+	//マップサイズが変更されたことを確認する（対処措置）
+	//googlemap.checkResize(); v2の場合
+	google.maps.event.trigger(googlemap, 'resize'); 
+
+	gmap_init();
+	//
+	v_line.setPosition(map_center.lat(),map_center.lng());
+	h_line.setPosition(map_center.lat(),map_center.lng());
+}
+
+//数値を３桁カンマ区切りで表示する
+function toFormattedNumberString(number)
+{
+	var result;
+ 
+	// 念のため、引数 number に与えられた値が "何桁毎かにカンマで区切られた数値文字列" だった場合を想定して、そこからカンマを取り除きます。純粋に数値が与えられた場合には、それをそのまま文字列に変換しています。
+	result = String(number).replace(/,/g, '');
+ 
+	// 先頭から符号も考慮して数字が 4 個以上見つかる部分を探して、その後ろ 3 つの数字の前にカンマを付与しています。それを繰り返し、カンマが付与できなくなった時点で終了します。
+	while (result != (result = result.replace(/^([-\+]?\d+)(\d{3})/, '$1,$2')));
+
+	return result;
+}
+
+
+
+//メニューのオープン・クローズ
+function menu_open(menu_name){
+	//menu_close
+	//menu_close();
+
+	var emt = document.getElementById(menu_name);
+	var block = emt.style.display;
+	var visi  = emt.style.visibility;
+		
+	if( block == "block" && visi == "visible"){
+		//emt.style.display = "none";
+		//emt.style.visibility = "hidden";
+		$("#" + menu_name).slideUp("slow");
+	}else{
+
+		menu_close();
+
+		//emt.style.display    = "block";
+		emt.style.visibility = "visible";
+		$("#" + menu_name).slideDown("slow");
+	}
+
+}
+
+function menu_close(){
+	/*
+	document.getElementById("move_menu").style.display = "none";
+	document.getElementById("move_menu").style.visibility = "hidden";
+	document.getElementById("area_menu").style.display = "none";
+	document.getElementById("area_menu").style.visibility = "hidden";
+	document.getElementById("duge_menu").style.display = "none";
+	document.getElementById("duge_menu").style.visibility = "hidden";
+	*/
+
+	$("#menu_info").slideUp("slow");
+	$("#move_menu").slideUp("slow");
+	$("#area_menu").slideUp("slow");
+	$("#appr_menu").slideUp("slow");
+	$("#duge_menu").slideUp("slow");
+	$("#city_menu").slideUp("slow");
+	$("#route_menu").slideUp("slow");
+}
+
+
+//******* 評価用のスクリプト ********
+//外部のデータを表示する
+function polydataview(){
+	var elm = document.getElementById("polydata");
+	switch(poly_type){
+		case "polyline" :
+			//alert("data set");
+			var path = polygonsArray[polygonsArray.length-1].getPath();
+			var latlng = "";
+			for(i=0 ; i < path.length ; i++){
+				latlng += path.getAt(i);
+			}
+			elm.value = latlng;
+			break;
+		case "circle"   :
+			elm.value = circle_center + circle_radius;
+			break;
+		case "rect"     :
+			elm.value = rect_start + rect_end;
+			break;
+	}
+}
+
+
+//表示されたエリア内のポイントを抽出し表示する
+var markers = [];
+function appraise(menu){
+	reset_markers();
+
+	/*
+	//ポリゴンデータの整形
+	var points = [];
+	for(var i = 0, l = path.length; i < l; i++) {
+
+		points[i] = {
+			latitude:  path.getAt(i).lat(),
+			longitude: path.getAt(i).lng()
+		};
+	}
+	*/
+
+	//ポリゴンデータ内の判断
+	var s = 0;
+	var latlng = "";
+	var title  = "";
+	var url    = "";
+	var memo   = "";
+
+	var emt = document.getElementById("PointList");
+	var sel = "<select size='4' name='Qpoints' id='Qpoints' onchange='Qcenter()'>";
+
+	for(var i = 0 ; i < Q_point.length ; i++){
+		
+		latlng = new google.maps.LatLng(Q_point[i][0],Q_point[i][1]);
+		title  = Q_point[i][2];
+		url    = Q_point[i][3];
+
+		if(url == ""){
+			memo = title;
+		}else{
+			memo = "<a href='" + url + "' target='_blank'>" + title + "</a>";
+		}
+
+		set_Marker(latlng,memo);
+
+		sel += "<option value='" + i + "' >" + (i+1) + ":" + Q_point[i][2] + "</option>";
+
+
+/*
+		//geolib.isPointInsideへのデータ形式は、評価対象、判定範囲ともにjson形式に注意
+		//{latitude:     ,longitude:     }
+		//var isInside = geolib.isPointInside(
+		//	{latitude: mklatlng.lat(),longitude: mklatlng.lng()},points);
+
+		//if(isInside){
+			markers[s] = new google.maps.Marker({
+				position: markersSample[i],
+				map: googlemap,
+				title:"Hello World!"
+			});
+			s++;
+		//}
+*/
+	}
+
+	sel += "</select>";
+
+	emt.innerHTML = sel;
+
+	//menu_open(menu);
+}
+
+//
+function Qcenter(){
+	var emt = document.getElementById("Qpoints").options;
+
+	var ind   = emt.selectedIndex;
+	var ivalue = emt[ind].value;
+
+	//alert(Q_point[ivalue][2]);
+
+	var center = new google.maps.LatLng(Q_point[ivalue][0],Q_point[ivalue][1]);
+
+	googlemap.panTo(center);
+
+	map_center = center;
+}
+
+//表示されたマーカー（データ）を消去する
+function reset_markers(){
+	if(markers.length !=0){
+		for(var i = 0 ; i < markers.length ; i++){
+			markers[i].setMap(null);
+		}
+	}
+}
+
+
+//試験表示
+  
+
+//町内会エリアのデータを取り込む
+var polygons = {};	//object宣言
+function takePolygon() {
+	$.ajax({
+		url: 'data/nonoichi_city.kml',
+		type: 'get',
+		dataType: 'xml',
+
+		success: function(xml) {
+			$(xml).find('Placemark').each(function(index, elem) {
+				var $elem = $(elem);
+				var name = $elem.find('name').text();
+				var coordinates = $elem.find('coordinates').text().split(' ');
+
+				var points = new Array(coordinates.length);
+
+				for(var i = 0, l = coordinates.length; i < l; i++) {
+					var point = coordinates[i].split(',');
+					points[i] = {
+						latitude: parseFloat(point[1]),
+						longitude: parseFloat(point[0])
+					};
+				}
+				//外部名定義済み
+				polygons[name] = points;
+			});
+		}
+	});
+
+	var town_name = "";
+	var elm = document.getElementById("town_area");
+	for(var name in polygons){
+		wopt = document.createElement('option');
+		wopt.setAttribute('value' , name);
+		$(wopt).append(name);
+		$('#town_area').append(wopt);
+	}
+
+}
+
+
+//ボリゴンポイント（path）１個削除（undo)
+function polyDelPath(){
+	if (poly_type != "polyline"){
+		alert("多角形選択時のみ有効です");
+		return;
+	}
+
+	//一番最後のポイントを除く tada
+	//polygonsArrayは、index 0 のみ使用している
+	var path = polygonsArray[0].getPath();
+	pointsArray4Area = [];
+
+	//path 1個前まで複写
+	for (var j=0;j< path.length - 1;j++){
+		pointsArray4Area.push(path.getAt(j));
+	}
+
+	if(path.length > 1){
+		set_polygon(pointsArray4Area,"","#ff0000",1);
+	}else{
+		polygonsArray[0].setMap(null);
+	}
+	//alert("this is del_path polygon");
+}
+
+
+//********************
+//for nonoichi cialton temp script
+
+//町内会データの表示
+function view_city_area(menu){
+
+	//初期化
+	clear_params();
+
+	takePolygon();
+
+	googlemap.setZoom(13);
+	googlemap.setCenter(new google.maps.LatLng(ini_lat,ini_lng));
+
+	//町内会データを強制的に外部データに置き換える
+	var elm = document.getElementById("town_area").options;
+	if(elm.length > 0 ){
+		var ind = elm.selectedIndex;
+		var town_name = elm[ind].value;
+
+		//if(!confirm("外部データとして「" + town_name + "」を取り込みますか？")){
+			//return;
+		//}
+
+		//選択した町内会エリアのデータ polygons[name] を out_pointsArray4Areaに複写
+		prev_poly_type = "polyline";
+		poly_type = "polyline";
+
+		out_pointsArray4Area = [];
+		var telm = polygons[town_name];
+
+		//先頭と末尾が同じ座標データでは、面積計算がエラーとなるため１個減算する
+		var tlength = telm.length  -1 ;
+		for(var i = 0 ; i < tlength ; i++){
+			out_pointsArray4Area[i] = new google.maps.LatLng(telm[i].latitude , telm[i].longitude);
+		}
+
+		// 外部データの先頭位置にスクロールさせる
+		//googlemap.panTo(out_pointsArray4Area[0]);
+	}
+
+
+	switch(out_polytype){
+		case "circle"   :
+			prev_poly_type = "circle"; //強制的に変化なしとする
+			poly_type = "circle";				
+			circle_center = out_circle_center;
+			circle_radius = out_circle_radius;
+			circle_flag = true;
+
+
+						document.getElementById("otherparam").innerHTML = '半径<input id="radius" size=25 value="" /><input type="text" id="radius_tani" style="border:0px" size=2 value="m">';
+		
+			document.getElementById("radius").value = circle_radius;
+
+			set_circlePolygon();
+			break;
+
+		case "rect"     :
+			prev_poly_type = "rect"; //強制的に変化なしとする
+			poly_type= "rect";
+			rect_start = out_rect_start;
+			rect_end   = out_rect_end;
+			rect_flag  = true;
+				
+						document.getElementById("otherparam").innerHTML = '横<input id="rect_width" size=11 value="" />ｘ縦<input id="rect_height" size=11 value="" /><input type="text" id="hen_tani" style="border:0px" size=2 value="m">';
+
+
+			//辺の長さ表示
+			var start_lat = rect_start.lat();
+			var start_lng = rect_start.lng();
+			var end_lat = rect_end.lat();
+			var end_lng = rect_end.lng();
+		
+			var temp;
+			//widthは同じ緯度の点を使う
+			temp = new google.maps.LatLng(start_lat, end_lng);
+			var rect_width = calc_betweenDistance(rect_start,temp);
+				
+			//heightは同じ経度の点を使う
+			temp = new google.maps.LatLng(end_lat, start_lng);
+			var rect_height = calc_betweenDistance(rect_start,temp);
+		
+						document.getElementById("rect_width").value = rect_width;
+						document.getElementById("rect_height").value = rect_height;
+
+			set_rectPolygon();
+			break;
+
+		case "polyline" :
+			prev_poly_type = "polyline"; //強制的に変化なしとする
+			poly_type="polyline";
+													
+			//配列の複写は、元の実体も変化する（関数作成）
+			//pointsArray4Area = out_pointsArray4Area;
+			pointsArray4Area = copyArray(out_pointsArray4Area);
+
+						document.getElementById("otherparam").innerHTML = '<input type="button" id="undo" onClick="polyDelPath()" value="追加取り消し" />';
+
+			set_polygon(pointsArray4Area,"","#ff0000",1);
+
+			break;
+	} 
+				
+	document.getElementById("explain").value = "外部データからエリアを作成";
+	//document.getElementById("otherparam").innerHTML = '';
+
+	var elm = document.GoogleMapsContainer;
+	for (var i = 0; i < elm.p_type.length; i++){
+		if(elm.p_type[i].value == poly_type){
+			elm.p_type[i].checked = true;
+		}
+	}
+
+}
+
+function setArive(index){
+	//var point = Q_point[index-1][0] + "," + Q_point[index-1][1];
+	var point = markersArray[index].getPosition();
+
+	document.getElementById("arive_point").value = point;
+}
+
+function setStart(index){
+	//var point = Q_point[index-1][0] + "," + Q_point[index-1][1];
+	var point = markersArray[index].getPosition();
+
+	document.getElementById("start_point").value = point;
+}
+
+function clear_Route(){
+	document.getElementById("start_point").value = "";
+	document.getElementById("arive_point").value = "";
+}
+
+function google_Route(){
+	var start = document.getElementById("start_point").value;
+	var arive = document.getElementById("arive_point").value;
+
+	if(start == "" || arive == ""){
+		alert("出発地点、または目標地点が設定されていません");
+		return;
+	}
+
+	window.open("https://google.co.jp/maps/dir/" + start + "/" + arive);
+}
+
+function getMapCenter(sw){
+	if(sw == 2){
+		document.getElementById("arive_point").value = map_center.lat() + "," + map_center.lng();
+	}else{
+		document.getElementById("start_point").value = map_center.lat() + "," + map_center.lng();		
+	}
+}
+</script>
+
+</body>
+</html>

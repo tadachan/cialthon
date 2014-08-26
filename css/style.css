@@ -1,0 +1,44 @@
+body{
+	text-align : center;
+	background-color : lightyellow;
+	margin-left : auto;
+}
+
+#header{
+	width : 420px;
+	height : 100px;
+	margin: 0 auto;  
+	//text-align: left;
+  
+	padding : 10px;
+	background-image : url("../images/background.png");
+	//background-repeat : no-repeat;
+	color : yellow;
+}
+#maintitle{
+	font-size : 24px;
+}
+#subtitle{
+	font-size : 20px;
+}
+#contener{
+	width : 420px;
+	margin: 0 auto;  
+
+	padding : 10px;
+	font-size : 14px;
+}
+#footer{
+	width : 420px;
+	margin: 0 auto;  
+
+	padding : 10px;
+	font-size : 10px;
+}
+
+#maparea{
+	height : 200px;
+	width  : 300px;
+	margin: 0 auto;
+}
+
