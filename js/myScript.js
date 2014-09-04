@@ -1,7 +1,10 @@
 var pointsArray4Area = [];
 //野々市市
-var ini_lat = 36.524048786585695;
-var ini_lng = 136.60613894462585;
+//var ini_lat = 36.524048786585695;
+//var ini_lng = 136.60613894462585;
+
+var ini_lat = 36.529152705513916;
+var ini_lng = 136.6088855266571;
 var ini_zoom = 14;
 
 var poly_type = "polyline";//default
@@ -2037,16 +2040,43 @@ function chk_radio(){
 
 //***************************************************************************
 
-function set_Marker(clickedLocation,title){
+function set_Marker(clickedLocation,title,icon){
 	var marker_icon = "";
 	var anchor = "";
 	var iconsize_x = 0;
 	var iconsize_y = 0;
 
+
+var sw = 2;
+
 	//if (marker_type == "default"){
 	if(title != "現在地"){
 		//そのまま
 		anchor = "lower";
+
+		switch(icon){
+			case 1 : marker_icon = 'images/red-dot.png';
+				iconsize_x = 32;
+				iconsize_y = 32;
+				zindex = 1;
+				break;
+			case 2 : marker_icon = 'images/blue-dot.png';
+				iconsize_x = 32;
+				iconsize_y = 32;
+				zindex = 2;
+				break;
+			case 3 : marker_icon = 'images/green-dot.png';
+				iconsize_x = 32;
+				iconsize_y = 32;
+				zindex = 3;
+				break;
+			case 4 : marker_icon = 'images/yellow-dot.png';
+				iconsize_x = 32;
+				iconsize_y = 32;
+				zindex = 4;
+				break;
+		}
+
 	/*	
 	}else if (marker_type == "custom1"){
 		marker_icon = 'http://wisteriahill.sakura.ne.jp/GMAP/GMAP_MARKER/images/hand.png';
@@ -2083,10 +2113,10 @@ function set_Marker(clickedLocation,title){
 	//var m_draggable = document.GoogleMapsContainer.m_drag.checked;
 	var m_draggable = false;
 	//alert(marker_icon);
-	addMarker2(markersArray.length,clickedLocation.lat(),clickedLocation.lng(),marker_icon,iconsize_x,iconsize_y,title,m_draggable,true,anim,anchor);
+	addMarker2(markersArray.length,clickedLocation.lat(),clickedLocation.lng(),marker_icon,iconsize_x,iconsize_y,title,m_draggable,true,anim,anchor,zindex);
 }
 
-function addMarker2(index,lat,lng,image,size_x,size_y,title,draggable,visible,anim,anchor){
+function addMarker2(index,lat,lng,image,size_x,size_y,title,draggable,visible,anim,anchor,zindex){
 	//alert(lat+"/"+lng+"/"+image+"/"+size_x+"/"+size_y+"/"+draggable+"/"+visible+"/"+anim+"/"+anchor);
 	//アイコンの作成
 	var marker_image = "";
@@ -2136,8 +2166,8 @@ function addMarker2(index,lat,lng,image,size_x,size_y,title,draggable,visible,an
 		title:title,
 		index:index,
 		visible:visible,
-		draggable : draggable
-		//zIndex: 1
+		draggable : draggable,
+		zIndex: zindex
 	});
 	
 	google.maps.event.addListener(marker, "click", function() {
@@ -2268,7 +2298,7 @@ function getNowLocation(sw){
 
 		// 現在位置にピンをたてる
 		//マーカ形状やドラッグの可否条件は、画面の設定による
-		set_Marker(nowLatLng,"現在地");
+		set_Marker(nowLatLng,"現在地",0);
 
 		// 現在地にスクロールさせる
 		googlemap.panTo(nowLatLng);
