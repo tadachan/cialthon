@@ -2075,6 +2075,11 @@ var sw = 2;
 				iconsize_y = 32;
 				zindex = 4;
 				break;
+			case 5 : marker_icon = 'images/arrowSmall80.png';
+				iconsize_x = 19;
+				iconsize_y = 27;
+				zindex = 0;
+				break;
 		}
 
 	/*	
