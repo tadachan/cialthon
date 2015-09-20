@@ -149,7 +149,7 @@
 	<!--li id="clear_map" onclick="clear_params(); menu_close();">クリア</li-->
 	<li id="move_tab"  onclick="menu_open('move_menu')">地図の<br />操作</li>
 </ul>
-<div id="menu_info">
+<div id="menu_info"  class="naviMenu">
 	野々市シャルソンへようこそ！！<br />
 	<!--道に迷ったら、マーカーをクリックしてください。<br /-->
 	<div id="PointList">
@@ -350,7 +350,7 @@
 	</div>
 </div>
 
-<div id="city_menu">
+<div id="city_menu" class="naviMenu">
 	<input type="button" onclick="view_city_area()" value="野々市市域を表示する" class="bt" /><br />
 	・東西4.5キロメートル、南北6.7キロメートル<br />
 	・面積13.56平方キロメートル<br />
@@ -358,7 +358,7 @@
 	<input type="button" value="クリア" onclick="clear_params()" />
 </div>
 
-<div id="route_menu">
+<div id="route_menu" class="naviMenu">
 	出発地点、目標地点を①、②、③いづれかの方法で設定し、経路を検索してください。<br />
 	<input type="button" onclick="clear_Route()" value="クリア" />
 	<input type="button" onclick="google_Route()" value="経路検索" class="bt" /><br />
@@ -374,7 +374,7 @@
 	<input type="button" value="③地図の中心" onclick="getMapCenter(2)" class="bt" />	
 </div>
 
-<div id="fb_menu">
+<div id="fb_menu" class="naviMenu">
 	野々市シャルソン<br />
 	<input type='button' value='Facebook イベントページ' onclick='window.open("https://www.facebook.com/events/676604602414582/")' class='bt' />
 	<br />
