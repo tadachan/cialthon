@@ -2055,9 +2055,10 @@ var sw = 2;
 		anchor = "lower";
 
 		switch(icon){
-			case 1 : marker_icon = 'images/red-dot.png';
-				iconsize_x = 32;
-				iconsize_y = 32;
+			case 1 : //marker_icon = 'images/red-dot.png';
+				marker_icon = 'images/green-pin.png';
+				iconsize_x = 17;
+				iconsize_y = 25;
 				zindex = 1;
 				break;
 			case 2 : marker_icon = 'images/blue-dot.png';
@@ -2075,9 +2076,12 @@ var sw = 2;
 				iconsize_y = 32;
 				zindex = 4;
 				break;
-			case 5 : marker_icon = 'images/arrowSmall80.png';
-				iconsize_x = 19;
-				iconsize_y = 27;
+			case 5 : //marker_icon = 'images/arrowSmall80.png';
+				//iconsize_x = 19;
+				//iconsize_y = 27;
+				marker_icon = 'images/red-dot.png';
+				iconsize_x = 32;
+				iconsize_y = 32;
 				zindex = 0;
 				break;
 		}

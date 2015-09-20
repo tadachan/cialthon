@@ -134,7 +134,7 @@
 </script>
 	
 </head>
-<body onload="initialize()">
+<body onload="initialize(); map_fit();">
 
 <form name="GoogleMapsContainer">
 
@@ -155,9 +155,9 @@
 	<div id="PointList">
 
 	</div>
-	<img src='images/yellow-dot.png' />スタート＆ゴール　<img src='images/red-dot.png' />給◯ポイント<br />
+	<img src='images/yellow-dot.png' />スタート＆ゴール　<img src='images/green-pin.png' />給◯ポイント<br />
 	<img src='images/blue-dot.png' />事務局　<img src='images/green-dot.png' />交流会場・スポンサー<br />
-	<img src='images/arrowSmall80.png' />主要施設<br />
+	<img src='images/red-dot.png' />主要施設<br />
 	
 
 	<!--・疲れたら「のっティ」に乗ってＯＫ<br />
@@ -381,8 +381,7 @@
 	<input type='button' value='Facebook 情報ページ' onclick='window.open("https://www.facebook.com/nonoichicialthon")' class='bt' />
 </div>
 
-
-<div id="map_canvas"></div>
+<div id="map_canvas" style="width:100%; height:480px;"></div>
 
 <div id="mapnavi">
 		
@@ -417,11 +416,16 @@
 <input type="text" id="polydata" size="200" />
 </div-->
 
-<div id="footer">
-Nonoichi Cialthon 2014
-</div>
+
 
 <script type="text/javascript">
+
+
+function map_fit(){
+	//ブラウザの縦サイズにフィットさせる
+	document.getElementById("map_canvas").style.height = (window.innerHeight - 60) + "px";
+}
+
 
 //****** 共通部のスクリプト ********
 
