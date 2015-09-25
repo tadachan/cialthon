@@ -153,19 +153,12 @@
 </head>
 <body onload="initialize(); map_fit(); setTimeout(view_city_area , 1000);">
 
+<!--div id="linkwindow">
+	<iframe src="http://nono1.jp/" width="100%" height="300"></iframe>
+</div-->
+
 <form name="GoogleMapsContainer">
 
-<ul id="menu_tab">
-	<!--li id="ret" onclick="window.open('https://www.facebook.com/nonoichicialthon')">ｼｬﾙｿﾝ<br />FBへ</li-->
-	<li id="ret" onclick="menu_open('fb_menu')">ｼｬﾙｿﾝ<br />FBへ</li>
-	<!--li id="menu_close" onclick="menu_close()">Menu<br />閉じる</li-->
-	<li id="subtitle" onclick="menu_open('menu_info')">給◯<br />ポイント</li>
-	<li id="area_tab"  onclick="menu_open('route_menu')">経路<br />検索</li>
-	<li id="duge_exe"  onclick="menu_open('city_menu');">野々市<br />市域</li-->
-	<!--li id="duge_tab"  onclick="appraise('duge_menu')">給◯<br />ポイント</li-->
-	<!--li id="clear_map" onclick="clear_params(); menu_close();">クリア</li-->
-	<li id="move_tab"  onclick="menu_open('move_menu')">地図の<br />操作</li>
-</ul>
 <div id="menu_info"  class="naviMenu">
 	野々市シャルソンへようこそ！！<br />
 	<!--道に迷ったら、マーカーをクリックしてください。<br /-->
@@ -398,6 +391,17 @@
 	<input type='button' value='Facebook 情報ページ' onclick='window.open("https://www.facebook.com/nonoichicialthon")' class='bt' />
 </div>
 
+
+<ul id="menu_tab">
+	<!--li id="ret" onclick="window.open('https://www.facebook.com/nonoichicialthon')">ｼｬﾙｿﾝ<br />FBへ</li-->
+	<li id="fb_menu_tab" onclick="menu_open('fb_menu')">ｼｬﾙｿﾝ<br />FBへ</li>
+	<li id="menu_info_tab" onclick="menu_open('menu_info')">給◯<br />ポイント</li>
+	<li id="route_menu_tab"  onclick="menu_open('route_menu')">経路<br />検索</li>
+	<li id="city_menu_tab"  onclick="menu_open('city_menu');">野々市<br />市域</li-->
+	<li id="move_menu_tab"  onclick="menu_open('move_menu')">地図の<br />操作</li>
+</ul>
+
+
 <div id="map_canvas" style="width:100%; height:480px;"></div>
 
 <div id="mapnavi">
@@ -497,7 +501,11 @@ function menu_open(menu_name){
 	//menu_close
 	//menu_close();
 
+	var targetY = 0;
+	$("html,body").animate({scrollTop:targetY},{duration: 1000});
+
 	var emt = document.getElementById(menu_name);
+	var tab = document.getElementById(menu_name + "_tab");
 	var block = emt.style.display;
 	var visi  = emt.style.visibility;
 		
@@ -505,6 +513,8 @@ function menu_open(menu_name){
 		//emt.style.display = "none";
 		//emt.style.visibility = "hidden";
 		$("#" + menu_name).slideUp("slow");
+
+		tab.style.background = "#fffdee";
 	}else{
 
 		menu_close();
@@ -512,6 +522,8 @@ function menu_open(menu_name){
 		//emt.style.display    = "block";
 		emt.style.visibility = "visible";
 		$("#" + menu_name).slideDown("slow");
+
+		tab.style.background = "pink";
 	}
 
 }
@@ -526,14 +538,17 @@ function menu_close(){
 	document.getElementById("duge_menu").style.visibility = "hidden";
 	*/
 
-	$("#menu_info").slideUp("slow");
-	$("#move_menu").slideUp("slow");
-	$("#area_menu").slideUp("slow");
-	$("#appr_menu").slideUp("slow");
-	$("#duge_menu").slideUp("slow");
-	$("#city_menu").slideUp("slow");
-	$("#route_menu").slideUp("slow");
+	document.getElementById("fb_menu_tab").style.background = "#fffdee";
+	document.getElementById("menu_info_tab").style.background = "#fffdee";
+	document.getElementById("route_menu_tab").style.background = "#fffdee";
+	document.getElementById("city_menu_tab").style.background = "#fffdee";
+	document.getElementById("move_menu_tab").style.background = "#fffdee";
+
 	$("#fb_menu").slideUp("slow");
+	$("#menu_info").slideUp("slow");
+	$("#route_menu").slideUp("slow");
+	$("#city_menu").slideUp("slow");
+	$("#move_menu").slideUp("slow");
 }
 
 
