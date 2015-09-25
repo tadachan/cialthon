@@ -8,7 +8,10 @@
 <meta name="keywords" content="シャルソン,野々市" />
 <meta name="Robots" content="ALL" />
 
-<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<!--meta name="viewport" content="initial-scale=1.0, user-scalable=no" /-->
+<meta name="viewport" content="initial-scale=1, maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 
 <title>給◯ポイント｜野々市シャルソン</title>
 
@@ -18,6 +21,11 @@
 
 <!-- jquery ライブラリ -->
 <script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+
+<!-- Include fork origin -->
+<!--link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
+<link href="css/main.css" rel="stylesheet">
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script-->
 
 <!-- googlemaps 描画用ライブラリ & 距離や面積の計算用ライブラリ -->
 <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=geometry,drawing&sensor=false"></script>
@@ -30,6 +38,15 @@
 <script type="text/javascript" src="js/geolib.js"></script>
 
 <script type="text/javascript">
+	/*
+	//フルスクリーンモードへ
+	if (window.navigator.standalone) {
+		location.href="http://apli.nono1.jp/cialthon/";
+	} else {
+		document.write("このページをホームに追加してください");
+	}
+	*/
+
 	//test data
 	//var out_polytype = "circle";
 	//var out_polytype = "rect";
@@ -134,7 +151,7 @@
 </script>
 	
 </head>
-<body onload="initialize(); map_fit();">
+<body onload="initialize(); map_fit(); setTimeout(view_city_area , 1000);">
 
 <form name="GoogleMapsContainer">
 
@@ -420,7 +437,6 @@
 
 <script type="text/javascript">
 
-
 function map_fit(){
 	//ブラウザの縦サイズにフィットさせる
 	document.getElementById("map_canvas").style.height = (window.innerHeight - 60) + "px";
@@ -627,6 +643,7 @@ function Qcenter(){
 	var center = new google.maps.LatLng(Q_point[ivalue][0],Q_point[ivalue][1]);
 
 	googlemap.panTo(center);
+	googlemap.setZoom(18);
 
 	map_center = center;
 }
@@ -722,8 +739,8 @@ function view_city_area(menu){
 
 	takePolygon();
 
-	googlemap.setZoom(13);
-	googlemap.setCenter(new google.maps.LatLng(ini_lat,ini_lng));
+	//googlemap.setZoom(13);
+	//googlemap.setCenter(new google.maps.LatLng(ini_lat,ini_lng));
 
 	//町内会データを強制的に外部データに置き換える
 	var elm = document.getElementById("town_area").options;
@@ -865,6 +882,7 @@ function getMapCenter(sw){
 		document.getElementById("start_point").value = map_center.lat() + "," + map_center.lng();		
 	}
 }
+
 
 </script>
 

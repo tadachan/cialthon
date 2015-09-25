@@ -71,7 +71,7 @@ body{
 
 
 #menu_tab{
-	width : 95%;
+	width : 100%;
 	float:right;
 	margin : 0px;
 	padding : 0px;
@@ -80,7 +80,7 @@ body{
 #menu_tab li{
 	float:left;
 
-	width: 18%;
+	width: 16%;
 	margin:0px;
 	padding: 10px 0px 10px 0px;
 	border: 1px #ffb366 solid;
