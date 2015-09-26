@@ -1035,7 +1035,15 @@ function delete_drawing(){
 
 //----------------------------------------------------------------------
 //ルート検索
+var Directions_flg = null;
 function route_search(from,via,to,travel_mode){
+
+	//すでに表示している場合
+	if(Directions_flg != null){
+		Directions_flg.setMap(null);
+		Directions_flg = null;
+	}
+
 	var optimizewaypoints_flag;
 	if (via.length == 0){
 		optimizewaypoints_flag = false;
@@ -1046,7 +1054,7 @@ function route_search(from,via,to,travel_mode){
 	var directionsService = new google.maps.DirectionsService();
 	var directionsDisplay = new google.maps.DirectionsRenderer();
 	
-	directionsDisplay.setMap(googlemap);
+	Directions_flg = directionsDisplay.setMap(googlemap);
 	
 	directionsService.route({
 		/*

@@ -366,6 +366,9 @@
 </div>
 
 <div id="route_menu" class="naviMenu">
+	<!--input type="button" value="現在位置の確認" onclick="getNowLocation(2)" class="bt" /-->
+
+
 	出発地点、目標地点を①、②、③いづれかの方法で設定し、経路を検索してください。<br />
 	<input type="button" onclick="clear_Route()" value="クリア" />
 	<input type="button" onclick="google_Route()" value="経路検索" class="bt" /><br />
@@ -379,6 +382,7 @@
 	①マーカー　
 	<input type="button" value="②現在位置" onclick="getNowLocation(1)" class="bt" />
 	<input type="button" value="③地図の中心" onclick="getMapCenter(2)" class="bt" />	
+
 </div>
 
 <div id="fb_menu" class="naviMenu">
@@ -395,7 +399,7 @@
 	<li id="fb_menu_tab" onclick="menu_open('fb_menu')">ｼｬﾙｿﾝ<br />FBへ</li>
 	<li id="menu_info_tab" onclick="menu_open('menu_info')">給◯<br />ポイント</li>
 	<li id="route_menu_tab"  onclick="menu_open('route_menu')">経路<br />検索</li>
-	<li id="city_menu_tab"  onclick="menu_open('city_menu');">野々市<br />市域</li-->
+	<li id="city_menu_tab"  onclick="menu_open('city_menu');">野々市<br />市域</li>
 	<li id="move_menu_tab"  onclick="menu_open('move_menu')">地図の<br />操作</li>
 </ul>
 
@@ -885,7 +889,10 @@ function google_Route(){
 		return;
 	}
 
-	window.open("https://google.co.jp/maps/dir/" + start + "/" + arive);
+	//window.open("https://google.co.jp/maps/dir/" + start + "/" + arive);
+
+	show_routeInfo(start,arive);
+
 }
 
 function getMapCenter(sw){

@@ -1169,13 +1169,28 @@ function polygon_draggable(index,type){
 
 
 //ルート検索
-function show_routeInfo(){
-	
+function show_routeInfo(from_point,to_point){
+
+	/*
 	var from_lat = 34.739071;
 	var from_lng = 135.499326;
 	var to_lat = 34.74030529820892;
 	var to_lng = 135.50386429765322;
-	
+	*/
+
+	from_point = from_point.replace("(","");
+	from_point = from_point.replace(")","");
+	to_point   = to_point.replace("(","");
+	to_point   = to_point.replace(")","");
+
+	var from_in = from_point.split(",");
+	var to_in   = to_point.split(",");
+
+	var from_lat = from_in[0];
+	var from_lng = from_in[1];
+	var to_lat   = to_in[0];
+	var to_lng   = to_in[1];	
+
 	var from = new google.maps.LatLng(from_lat,from_lng);
 	var to = new google.maps.LatLng(to_lat,to_lng);
 	
@@ -1183,7 +1198,8 @@ function show_routeInfo(){
 	//var loc1 = new google.maps.LatLng(34.74174474188263,135.50114393234253);
 	//via =  [{ location:loc1}];
 	
-	var travel_mode = google.maps.DirectionsTravelMode.DRIVING;
+	//var travel_mode = google.maps.DirectionsTravelMode.DRIVING;
+	var travel_mode = google.maps.DirectionsTravelMode.WALKING;
 	//DRIVING：道路網を利用した標準の運転ルート
 	//WALKING：自転車専用道路と優先道路を使用した自転車ルート
 	//BICYCLING：歩行者専用道路と歩道を使用した徒歩ルート
@@ -1204,7 +1220,7 @@ function route_info(response){
 	 	meters += response.routes[0].legs[i].distance.value; // 距離(m)
 	 }
 	 
-	//alert(k_meters + "(" + meters + ")");
+	alert(k_meters + "(" + meters + ")");
 	
 	
 	var myRoute = response.routes[0].legs[0];
@@ -1222,7 +1238,7 @@ function route_info(response){
 		
 	}
 	
-	//alert(temp);
+	alert(temp);
 	
 	
 }
