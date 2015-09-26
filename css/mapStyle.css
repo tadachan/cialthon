@@ -93,7 +93,7 @@ body{
 #menu_info,#move_menu,#area_menu,#duge_menu,#appr_menu,#city_menu,#route_menu,#fb_menu{
 	clear:both;
 
-	padding-left:20px;
+	/*padding-left:20px;*/
 	display:none;
 	visibility:hidden;
 }

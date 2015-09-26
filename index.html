@@ -8,10 +8,11 @@
 <meta name="keywords" content="シャルソン,野々市" />
 <meta name="Robots" content="ALL" />
 
-<!--meta name="viewport" content="initial-scale=1.0, user-scalable=no" /-->
-<meta name="viewport" content="initial-scale=1, maximum-scale=1">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<!--meta name="viewport" content="minimal-ui"-->
+<meta name="viewport" content="minimal-ui, initial-scale=1.0, user-scalable=no" />
+<!--meta name="viewport" content="initial-scale=1, maximum-scale=1"-->
+<!--meta name="apple-mobile-web-app-capable" content="yes"-->
+<!--meta name="apple-mobile-web-app-status-bar-style" content="black"-->
 
 <title>給◯ポイント｜野々市シャルソン</title>
 
@@ -153,10 +154,6 @@
 </head>
 <body onload="initialize(); map_fit(); setTimeout(view_city_area , 1000);">
 
-<!--div id="linkwindow">
-	<iframe src="http://nono1.jp/" width="100%" height="300"></iframe>
-</div-->
-
 <form name="GoogleMapsContainer">
 
 <div id="menu_info"  class="naviMenu">
@@ -189,7 +186,7 @@
 		<input type="text" id="realaddress" size=25 value="" />
 		<input type="button" id="addressmove" value="移動" onclick="addressNavi()" />
 
-		<hr />
+		<!--hr />
 		■地図の高さを指定できます
 		<select id="mapheight" onChange="mapHeight();">
 		<option value="300px" >300px</option>
@@ -201,7 +198,7 @@
 		<option value="600px" >600px</option>
 		<option value="650px" >650px</option>
 		<option value="700px" >700px</option>
-		</select>
+		</select-->
 
 	</div>
 	
@@ -374,12 +371,12 @@
 	<input type="button" onclick="google_Route()" value="経路検索" class="bt" /><br />
 <hr />
 	・出発地点：<input type="text" id="start_point" size="25" /><br />
-	①マーカーをクリック　
+	①マーカー　
 	<input type="button" value="②現在位置" onclick="getNowLocation(2)" class="bt" />
 	<input type="button" value="③地図の中心" onclick="getMapCenter(1)" class="bt" />
 <hr />
 	・目標地点：<input type="text" id="arive_point" size="25" /><br />
-	①マーカーをクリック　
+	①マーカー　
 	<input type="button" value="②現在位置" onclick="getNowLocation(1)" class="bt" />
 	<input type="button" value="③地図の中心" onclick="getMapCenter(2)" class="bt" />	
 </div>
@@ -389,6 +386,7 @@
 	<input type='button' value='Facebook イベントページ' onclick='window.open("https://www.facebook.com/events/676604602414582/")' class='bt' />
 	<br />
 	<input type='button' value='Facebook 情報ページ' onclick='window.open("https://www.facebook.com/nonoichicialthon")' class='bt' />
+
 </div>
 
 
