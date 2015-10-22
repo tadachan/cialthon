@@ -1220,8 +1220,7 @@ function route_info(response){
 	 	meters += response.routes[0].legs[i].distance.value; // 距離(m)
 	 }
 	 
-	alert(k_meters + "(" + meters + ")");
-	
+	//alert(k_meters + "(" + meters + ")");	
 	
 	var myRoute = response.routes[0].legs[0];
 	var temp = "";
@@ -1238,7 +1237,7 @@ function route_info(response){
 		
 	}
 	
-	alert(temp);
+	//alert(temp);
 	
 	
 }
@@ -2293,8 +2292,8 @@ function clear_markers(){
 }
 
 
-
 //現在位置の取り込み	tada
+var nowLocation = false;
 function getNowLocation(sw){
 	// gps に対応しているかチェック
 	if (! navigator.geolocation) {
@@ -2325,6 +2324,10 @@ function getNowLocation(sw){
 		//マーカ形状やドラッグの可否条件は、画面の設定による
 		set_Marker(nowLatLng,"現在地",0);
 
+		//現在地データの取得フラグ
+		nowLocation = true;
+
+
 		// 現在地にスクロールさせる
 		googlemap.panTo(nowLatLng);
 
@@ -2333,6 +2336,7 @@ function getNowLocation(sw){
 		v_line.setPosition(map_center.lat(),map_center.lng());
     		h_line.setPosition(map_center.lat(),map_center.lng());
 
+		/*
 		//座標データの再設定
  		var cont = "";
 		for(var i=0;i< markersArray.length;i++){
@@ -2341,6 +2345,7 @@ function getNowLocation(sw){
 			cont += pos.lat() + "," + pos.lng() + "\n";
 		}
 		//document.getElementById("nodes").value = cont;
+		*/
 
 		if(sw == 2){
 			document.getElementById("start_point").value = map_center.lat() + "," + map_center.lng();
@@ -2355,6 +2360,16 @@ function getNowLocation(sw){
         	alert('現在地情報を取得できませんでした。ご利用端末の設定を確認してください。');
         	return false;
 	});
+}
+
+//現在位置マーカーのクリア
+function clearNowLocation(){
+	var index = markersArray.length - 1;
+
+	//markerの削除
+	clearMarker(index);	//map上から消す
+	markersArray.splice(index,1);
+	//markersData.splice(index,1);
 }
 
 

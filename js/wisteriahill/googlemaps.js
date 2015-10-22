@@ -1035,14 +1035,26 @@ function delete_drawing(){
 
 //----------------------------------------------------------------------
 //ルート検索
-var Directions_flg = null;
+var DirecFlg = false;
+var directionsService = new google.maps.DirectionsService();
+
+//option
+var directionsDisplay = new google.maps.DirectionsRenderer(
+	{
+		map:googlemap,
+		//panel: document.getElementById("directions_panel"),
+		draggable:true	//ルートをドラッグで変更可能
+	}
+    );
+
 function route_search(from,via,to,travel_mode){
 
 	//すでに表示している場合
-	if(Directions_flg != null){
-		Directions_flg.setMap(null);
-		Directions_flg = null;
+	if(DirecFlg){
+		directionsDisplay.setMap(null);
+		DirecFlg = false;
 	}
+
 
 	var optimizewaypoints_flag;
 	if (via.length == 0){
@@ -1051,10 +1063,14 @@ function route_search(from,via,to,travel_mode){
 		optimizewaypoints_flag = true;
 	}
 	
-	var directionsService = new google.maps.DirectionsService();
-	var directionsDisplay = new google.maps.DirectionsRenderer();
+	//var directionsService = new google.maps.DirectionsService();
+	//var directionsDisplay = new google.maps.DirectionsRenderer();
 	
-	Directions_flg = directionsDisplay.setMap(googlemap);
+	directionsDisplay.setMap(googlemap);
+	DirecFlg = true;
+
+	//ルート情報を表示
+	directionsDisplay.setPanel(document.getElementById("directions_panel"));
 	
 	directionsService.route({
 		/*
@@ -1076,15 +1092,16 @@ function route_search(from,via,to,travel_mode){
 		
 		avoidHighways:true,//高速道路を可能な限りルートの計算から除外する
 		avoidTolls:true,//有料道路を可能な限りルートの計算から除外する
-		
-		
+				
 		travelMode:travel_mode//
 		
 		},function(response, status){
 		if (status == google.maps.DirectionsStatus.OK) {
+
 			directionsDisplay.setDirections(response);
 			
 			route_info(response);
+
 			
 		}else{
 			
